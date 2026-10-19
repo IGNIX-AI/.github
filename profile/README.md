@@ -19,7 +19,7 @@ que transformam gestão passiva em sistemas ativos.
 
 ## Plataforma GNX
 
-| | |
+| Solução | O que faz |
 |---|---|
 | **GNX ERP** · operação industrial | Controle industrial com visão integrada de produção, estoque, custos e finanças. Gestão produtiva e de materiais com rastreabilidade e indicadores operacionais para decidir no tempo certo. |
 | **GNX CRM** · relacionamento comercial | Clientes, oportunidades e pós-venda conectados aos dados reais da operação. Triagem automática de leads e respostas com IA generativa, distribuição de contatos por rodízio e histórico. Validado com clientes do comércio, da indústria e de concessionárias. |
