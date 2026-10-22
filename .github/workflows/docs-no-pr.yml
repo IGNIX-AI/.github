@@ -1,0 +1,35 @@
+# Workflow reutilizável: no Pull Request, avisa quando o código mudou e docs/ não.
+# Não bloqueia o merge; deixa um aviso no PR para o revisor.
+name: Documentação no PR
+
+on:
+  workflow_call:
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Confere se a documentação acompanhou o código
+        run: |
+          base="origin/${{ github.base_ref }}"
+          mudou=$(git diff --name-only "$base"...HEAD)
+          codigo=$(echo "$mudou" | grep -vE '^(docs/|README\.md|\.github/|\.claude/|CLAUDE\.md)' || true)
+          docs=$(echo "$mudou" | grep -E '^docs/' || true)
+          {
+            echo "## Documentação"
+            if [ -n "$codigo" ] && [ -z "$docs" ]; then
+              echo "⚠️ Este PR muda código e não muda nada em \`docs/\`."
+              echo "Se a mudança afeta arquitetura, API, dados ou como rodar, peça ao Claude Code: **\"atualize a documentação deste PR\"**."
+              echo ""
+              echo "Arquivos de código alterados:"
+              echo "$codigo" | sed 's/^/- /'
+            else
+              echo "✅ Documentação em dia com o código deste PR."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$codigo" ] && [ -z "$docs" ]; then
+            echo "::warning title=Documentação::O PR muda código e não atualiza docs/. Veja o resumo do job."
+          fi

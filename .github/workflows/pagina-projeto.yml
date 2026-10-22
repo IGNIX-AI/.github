@@ -1,0 +1,33 @@
+# Workflow reutilizável: atualiza a página do projeto (README + docs/README.md) a partir de docs/.
+# Os repositórios chamam com: uses: IGNIX-AI/.github/.github/workflows/pagina-projeto.yml@main
+name: Página do projeto
+
+on:
+  workflow_call:
+
+jobs:
+  pagina:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: IGNIX-AI/.github
+          path: _ignix
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Monta a página
+        run: python _ignix/ferramentas/pagina-projeto.py .
+      - name: Publica
+        run: |
+          rm -rf _ignix
+          if git diff --quiet; then echo "Página já estava em dia."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Docs: atualiza a página do projeto"
+          git push
