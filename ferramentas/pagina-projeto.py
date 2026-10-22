@@ -29,6 +29,7 @@ def ler(arquivo):
             titulo = l[2:].strip()
         elif l and not l.startswith(("#", ">", "|", "```", "<!--", "-", "*")) and not resumo:
             resumo = re.sub(r"[*`_]", "", l)
+            resumo = re.sub(r"\s*Atualizado em \d{2}/\d{2}/\d{4}\.?", "", resumo).strip()
             resumo = resumo if len(resumo) <= 140 else resumo[:137].rsplit(" ", 1)[0] + "…"
     return titulo, resumo
 
@@ -72,7 +73,8 @@ def main():
              "automaticamente a cada push na `main`.", ""]
     secao += [tabela(raiz, principais, raiz) if principais else "_Nenhum documento ainda._", ""]
     if decisoes:
-        secao += [f"**Decisões técnicas:** {len(decisoes)} registradas, a mais recente "
+        qtd = "1 registrada" if len(decisoes) == 1 else f"{len(decisoes)} registradas"
+        secao += [f"**Decisões técnicas:** {qtd}, a mais recente "
                   f"[{ler(decisoes[-1])[0]}]({decisoes[-1].relative_to(raiz).as_posix()}).", ""]
     secao.append(FIM)
     bloco = "\n".join(secao)
